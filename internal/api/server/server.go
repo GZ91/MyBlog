@@ -1,11 +1,13 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
 	"github.com/GZ91/MyBlog/internal/api/handlers"
 	"github.com/GZ91/MyBlog/internal/api/middleware"
+	"github.com/GZ91/MyBlog/internal/app/config"
 	"github.com/GZ91/MyBlog/internal/service"
 	"github.com/GZ91/MyBlog/internal/storage"
 	"github.com/go-chi/chi/v5"
@@ -15,18 +17,25 @@ import (
 type Server struct {
 	http.Server
 	Logger *zap.Logger
+	Config *config.Config
 }
 
 func New() *Server {
 	return &Server{}
 }
 
-func (s *Server) Configure(logger *zap.Logger) {
+func (s *Server) Configure(logger *zap.Logger, config *config.Config) {
 	s.Logger = logger
+	s.Config = config
 }
 
 func (s *Server) Start() error {
-	NodeStorage := storage.New(s.Logger)
+	ctx := context.Background()
+	NodeStorage := storage.New(s.Logger, s.Config)
+	if err := NodeStorage.Up(ctx); err != nil {
+		s.Logger.Error("storage up error", zap.Error(err))
+		return err
+	}
 	NodeService := service.New(s.Logger, NodeStorage)
 	s.Addr = ":8080"
 	s.Handler = s.routing(handlers.New(s.Logger, NodeService))
@@ -36,6 +45,7 @@ func (s *Server) Start() error {
 			s.Logger.Error("server startup error", zap.Error(err))
 		}
 	}
+	NodeStorage.Close()
 	return nil
 }
 
@@ -50,7 +60,11 @@ func (s *Server) routing(handls *handlers.Handlers) *chi.Mux {
 
 	fs := http.FileServer(http.Dir("../../source/"))
 	router.Handle("/source/*", http.StripPrefix("/source/", fs))
-	router.Get("/", handls.MainPage)
+
+	router.Get("/", handls.Index)
+	router.Get("/login", handls.Login)
+	router.Post("/login", handls.Login)
+	router.Post("/login/post", handls.LoginPost)
 
 	return router
 }

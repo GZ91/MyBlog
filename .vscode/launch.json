@@ -12,12 +12,7 @@
             "program": "${workspaceFolder}/cmd/app/main.go",
             "showLog": true,
             "env": {
-                "DATABASE_DSN": "postgres://postgres:buster97@localhost:5432/TestBase?sslmode=disable",
-                "LOG_LEVEL": "info",
-                "Secret_Key": "SECRETKEY",
-                "SERVER_ADDRESS": "localhost:8080",
-                "BASE_URL": "http://localhost:8080",
-                "FILE_STORAGE_PATH": ""
+                "DATABASE_DSN": "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
             }
         }
     ]

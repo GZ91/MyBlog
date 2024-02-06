@@ -1,8 +1,14 @@
 package service
 
-import "go.uber.org/zap"
+import (
+	"github.com/GZ91/MyBlog/internal/models"
+	"go.uber.org/zap"
+)
 
 type NodeStorager interface {
+	Authorized(userID string) (bool, error)
+	Login(login, password, userID string) (bool, error)
+	GetArts() ([]models.Art, error)
 }
 
 type Service struct {

@@ -1,0 +1,15 @@
+<div class="grid">
+    <section>
+        <hgroup>
+            <h2>Мои Стихи</h2>
+            <h3>Путь начинается с одной лишь мысли</h3>
+        </hgroup>
+        <figure>
+            <img src="/source/css/saved_resource" alt="Alps Mountains">
+        </figure>
+        {{range .ArtList}}
+        <h3>{{.Name}}</h3>
+        <p>{{.Text}}</p>
+        {{end}}
+    </section>
+</div>

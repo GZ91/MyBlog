@@ -37,7 +37,7 @@ func (s *Server) Start() error {
 		return err
 	}
 	NodeService := service.New(s.Logger, NodeStorage)
-	s.Addr = ":8080"
+	s.Addr = ":80"
 	s.Handler = s.routing(handlers.New(s.Logger, NodeService))
 
 	if err := s.ListenAndServe(); err != nil {

@@ -7,6 +7,7 @@ import (
 // EnvVars представляет структуру для хранения параметров окружения.
 type EnvVars struct {
 	ConnectionStringDB string `env:"DATABASE_DSN"`
+	MainPath           string `env:"MAIN_PATH"`
 }
 
 // ReadEnv считывает параметры из переменных окружения и возвращает объект EnvVars.

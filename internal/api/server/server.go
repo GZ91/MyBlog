@@ -38,7 +38,7 @@ func (s *Server) Start() error {
 	}
 	NodeService := service.New(s.Logger, NodeStorage)
 	s.Addr = ":80"
-	s.Handler = s.routing(handlers.New(s.Logger, NodeService))
+	s.Handler = s.routing(handlers.New(s.Logger, NodeService, s.Config))
 
 	if err := s.ListenAndServe(); err != nil {
 		if !errors.Is(err, http.ErrServerClosed) {
@@ -58,7 +58,7 @@ func (s *Server) routing(handls *handlers.Handlers) *chi.Mux {
 	router.Use(middleware.Authentication)
 	router.Use(middleware.CalculateSize)
 
-	fs := http.FileServer(http.Dir("../../source/"))
+	fs := http.FileServer(http.Dir(s.Config.GetMainPath() + "/source/"))
 	router.Handle("/source/*", http.StripPrefix("/source/", fs))
 
 	router.Get("/", handls.Index)

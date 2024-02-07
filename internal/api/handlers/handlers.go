@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/GZ91/MyBlog/internal/app/config"
 	"github.com/GZ91/MyBlog/internal/models"
 	"go.uber.org/zap"
 )
@@ -14,16 +15,13 @@ type NodeServicer interface {
 type Handlers struct {
 	NodeService NodeServicer
 	logger      *zap.Logger
+	config      *config.Config
 }
 
-func New(logger *zap.Logger, NodeS NodeServicer) *Handlers {
+func New(logger *zap.Logger, NodeS NodeServicer, config *config.Config) *Handlers {
 	return &Handlers{
 		NodeService: NodeS,
 		logger:      logger,
+		config:      config,
 	}
-}
-
-type Page struct {
-	Content    string
-	AlterLabel string
 }

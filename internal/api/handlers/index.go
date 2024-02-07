@@ -22,7 +22,7 @@ func (h *Handlers) Index(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusTemporaryRedirect)
 		return
 	}
-	tmpl, err := template.ParseFiles("../../source/template.html")
+	tmpl, err := template.ParseFiles(h.config.GetMainPath() + "/source/template.html")
 	if err != nil {
 		h.logger.Error("error main page", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
@@ -41,7 +41,7 @@ func (h *Handlers) Index(w http.ResponseWriter, r *http.Request) {
 		ArtList:    artList,
 	}
 
-	tmpl2, err := template.ParseFiles("../../source/index.html")
+	tmpl2, err := template.ParseFiles(h.config.GetMainPath() + "/source/index.html")
 	if err != nil {
 		h.logger.Error("error main page", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)

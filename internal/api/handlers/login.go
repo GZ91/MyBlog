@@ -13,13 +13,13 @@ import (
 
 func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 
-	tmpl, err := template.ParseFiles("../../source/template.html")
+	tmpl, err := template.ParseFiles(h.config.GetMainPath() + "/source/template.html")
 	if err != nil {
 		h.logger.Error("error main page", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	file, err := os.Open("../../source/login.html")
+	file, err := os.Open(h.config.GetMainPath() + "/source/login.html")
 	if err != nil {
 		h.logger.Error("error open index file", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
@@ -35,7 +35,7 @@ func (h *Handlers) Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		dataLine = "<p> Неверный логин или пароль<p>" + dataLine
 	}
-	tmplt := &Page{
+	tmplt := &models.Page{
 		Content:    dataLine,
 		AlterLabel: "",
 	}

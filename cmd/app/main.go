@@ -12,7 +12,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	config := config.New(envs.ConnectionStringDB)
+	config := config.New(envs.ConnectionStringDB, envs.MainPath)
 	app := app.New("info", config)
 	err = app.Start()
 	if err != nil {

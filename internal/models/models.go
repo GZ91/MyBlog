@@ -12,3 +12,8 @@ type PageArt struct {
 	AlterLabel string
 	ArtList    []Art
 }
+
+type Page struct {
+	Content    string
+	AlterLabel string
+}

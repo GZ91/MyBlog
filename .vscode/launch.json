@@ -12,7 +12,8 @@
             "program": "${workspaceFolder}/cmd/app/main.go",
             "showLog": true,
             "env": {
-                "DATABASE_DSN": "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
+                "DATABASE_DSN": "postgres://postgres:password@localhost:5432/postgres?sslmode=disable",
+                "MAIN_PATH":"../.."
             }
         }
     ]

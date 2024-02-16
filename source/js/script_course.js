@@ -28,7 +28,11 @@ function goStart(){
 var noSleep = new NoSleep();
 
 document.getElementById('activateNoSleep').addEventListener('click', function() {
+    const speech = new SpeechSynthesisUtterance();
+    speech.text = 'Запуск автоматического воспроизведения';
+    speech.lang = 'ru-RU'; // Установка русского языка озвучки
+    window.speechSynthesis.speak(speech) 
     noSleep.enable(); // Включить предотвращение спящего режима
-	setInterval(goStart, 300000);
+	setInterval(goStart, 60000);
     this.remove(); // Удалить кнопку после активации
 });

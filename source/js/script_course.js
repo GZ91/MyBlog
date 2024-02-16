@@ -1,5 +1,9 @@
-document.getElementById('getPrice').addEventListener('click', function() { 
-goStart();
+document.getElementById('getPrice').addEventListener('click', function() {
+    const speech = new SpeechSynthesisUtterance();
+    speech.text = 'Уточнение';
+    speech.lang = 'ru-RU'; // Установка русского языка озвучки
+    window.speechSynthesis.speak(speech) 
+    goStart();
 });
 
 
@@ -15,7 +19,7 @@ function goStart(){
         .then(response => response.json())
         .then(data => {
             const price = Math.round(data.price); // Округление до целого числа
-            const message = `Текущая цена биткоина составляет ${price} долларов США.`;
+            const message = `Текущая цена биткоина составляет ${price} долларов.`;
             speak(message);
         })
         .catch(error => console.error('Error fetching data:', error));

@@ -65,6 +65,7 @@ func (s *Server) routing(handls *handlers.Handlers) *chi.Mux {
 	router.Get("/login", handls.Login)
 	router.Post("/login", handls.Login)
 	router.Post("/login/post", handls.LoginPost)
+	router.Get("/course", handls.Course)
 
 	return router
 }

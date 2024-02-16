@@ -25,6 +25,6 @@ var noSleep = new NoSleep();
 
 document.getElementById('activateNoSleep').addEventListener('click', function() {
     noSleep.enable(); // Включить предотвращение спящего режима
-	setInterval(goStart, 60000);
+	setInterval(goStart, 300000);
     this.remove(); // Удалить кнопку после активации
 });

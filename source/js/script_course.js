@@ -19,7 +19,7 @@ function goStart(){
         .then(response => response.json())
         .then(data => {
             const price = Math.round(data.price); // Округление до целого числа
-            const message = `Текущая цена биткоина составляет ${price} долларов.`;
+            const message = `${price}`;
             speak(message);
         })
         .catch(error => console.error('Error fetching data:', error));
@@ -29,7 +29,7 @@ var noSleep = new NoSleep();
 
 document.getElementById('activateNoSleep').addEventListener('click', function() {
     const speech = new SpeechSynthesisUtterance();
-    speech.text = 'Запуск автоматического воспроизведения';
+    speech.text = 'Автомат запущен';
     speech.lang = 'ru-RU'; // Установка русского языка озвучки
     window.speechSynthesis.speak(speech) 
     noSleep.enable(); // Включить предотвращение спящего режима

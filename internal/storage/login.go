@@ -29,3 +29,17 @@ func (s *Storage) Authorized(userID string) (bool, error) {
 	}
 	return true, nil
 }
+
+func (s *Storage) InputFixation(userID string) error {
+	row := s.db.QueryRow("SELECT login FROM users WHERE userID = $1", userID)
+	var login string
+	err := row.Scan(&login)
+	if err != nil {
+		return err
+	}
+	_, err = s.db.Exec("INSERT INTO input_fixation (login) VALUES ($1)", login)
+	if err != nil {
+		return err
+	}
+	return nil
+}

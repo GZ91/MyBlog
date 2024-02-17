@@ -9,6 +9,7 @@ type NodeStorager interface {
 	Authorized(userID string) (bool, error)
 	Login(login, password, userID string) (bool, error)
 	GetArts() ([]models.Art, error)
+	InputFixation(userID string) error
 }
 
 type Service struct {

@@ -33,7 +33,10 @@ func (s *Storage) Up(ctx context.Context) error {
 		return err
 	}
 	s.db = db
-	s.createTable(ctx)
+	err = s.createTable(ctx)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -47,9 +50,19 @@ func (s *Storage) createTable(ctx context.Context) error {
 		return err
 	}
 	defer con.Close()
-	s.createTableUsers(con, ctx)
-	s.createTableArticles(con, ctx)
-	return err
+	err = s.createTableUsers(con, ctx)
+	if err != nil {
+		return err
+	}
+	err = s.createTableArticles(con, ctx)
+	if err != nil {
+		return err
+	}
+	err = s.createTableInputFixation(con, ctx)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *Storage) createTableUsers(con *sql.Conn, ctx context.Context) error {
@@ -71,6 +84,16 @@ func (s *Storage) createTableArticles(con *sql.Conn, ctx context.Context) error 
 		time timestamp without time zone DEFAULT CURRENT_TIMESTAMP, 
 		name VARCHAR(250) NOT NULL,
 		text TEXT NOT NULL
+	);`)
+	return err
+}
+
+func (s *Storage) createTableInputFixation(con *sql.Conn, ctx context.Context) error {
+	_, err := con.ExecContext(ctx, `CREATE TABLE IF NOT EXISTS input_fixation 
+	(
+		id serial PRIMARY KEY,
+		time timestamp without time zone DEFAULT CURRENT_TIMESTAMP, 
+		login VARCHAR(250) NOT NULL
 	);`)
 	return err
 }

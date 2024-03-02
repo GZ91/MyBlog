@@ -10,16 +10,15 @@
     <h1>Bitcoin Price Alert</h1>
     <button id="getPrice">Get Bitcoin Price</button> 
 	<button id="activateNoSleep">Activate No Sleep</button>
-    <div>
-        <p>Повышение</p>
-        <input type="number" id="priceInput" placeholder="Введите цену">
-        <button id="checkPriceBtn">Ожидать ценовое превышение</button>
-    </div>
-    <div>
-        <p>Понижение</p>
-        <input type="number" id="priceInputMin" placeholder="Введите цену">
-        <button id="checkMinPriceBtn">Ожидать ценовое понижение</button>
-    </div>
+
+    <h1>Повышение</h1>
+    <button id="addMechanismMax">Добавить механизм превышения</button>
+    <div id="containerMax"></div>
+    <h1>Понижение</h1>
+    <button id="addMechanismMin">Добавить механизм понижения</button>
+    <div id="containerMin"></div>
+    
+    
     <script src="/source/js/script_course.js"></script>
 </body>
 </html>

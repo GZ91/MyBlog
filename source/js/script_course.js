@@ -49,108 +49,163 @@ document.getElementById('activateNoSleep').addEventListener('click', function() 
     }      
 });
 
-let checkInterval = null; // Для хранения ссылки на setInterval
-let buttonCheckPrice = null;
-let userPrice = null;
 
-document.getElementById('checkPriceBtn').addEventListener('click', function() {
-    buttonCheckPrice = this;
-    if (checkInterval == null) {
-        // Если проверка не активирована, начинаем проверку
-        checkPrice(); // Проверяем цену сразу при нажатии
-        checkInterval = setInterval(checkPrice, 10000); // Затем устанавливаем интервал
+let ArrayMax = new Array();
 
-        // Изменяем цвет кнопки, указывая на активацию
-        buttonCheckPrice.style.backgroundColor = 'red';
-        userPrice = document.getElementById('priceInput').value;
-        buttonCheckPrice.textContent = `Остановить ожидание (${userPrice})`;
+document.getElementById('addMechanismMax').addEventListener('click', function() {
+    var container = document.getElementById('containerMax');
+  
+    // Создаем поле ввода
+    var input = document.createElement('input');
+    input.type = 'number';
+    input.placeholder = 'Укажите цену биткоина';
+  
+    // Создаем кнопку для запуска процедуры
+    var button = document.createElement('button');
+    button.textContent = 'Запустить ожидание';
+    
+    // Добавляем обработчик нажатия для кнопки
+    button.addEventListener('click', function() {
+      var targetPrice = input.value;
+      let thisElem = null;
+      for (let i = 0; i < ArrayMax.length; i++) {
+        if (this == ArrayMax[i].button){
+            if (ArrayMax[i].checkInterval == null){
+                // Если проверка не активирована, начинаем проверку
+                const checkPriceFunc = function(){
+                    fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
+                    .then(response => response.json())
+                    .then(data => {
+                        const btcPrice = parseFloat(data.price);
+                        if (btcPrice > ArrayMax[i].userPrice) {
+                            let btcPriceVoice = Math.round(data.price)
+                            speak(`Текущая цена Bitcoin (${btcPriceVoice}) выше (${ArrayMax[i].userPrice})!`);
+                            ArrayMax[i].userPrice = null;
+                            clearInterval(ArrayMax[i].checkInterval);
+                            ArrayMax[i].checkInterval = null;
+                            // Возвращаем цвет кнопки к исходному состоянию
+                            ArrayMax[i].button.style.backgroundColor = ''; // Исходный цвет кнопки
+                            ArrayMax[i].button.textContent = 'Ожидать ценовое превышение';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при получении данных: ', error);
+                        alert('Произошла ошибка при получении данных с Binance.');
+                    });
+                }; // Проверяем цену сразу при нажатии
+                checkPriceFunc();
+                ArrayMax[i].checkInterval = setInterval(checkPriceFunc, 10000); // Затем устанавливаем интервал
         
-        speak(`Ожидание на цену (${userPrice}) включено`)
+                // Изменяем цвет кнопки, указывая на активацию
+                ArrayMax[i].button.style.backgroundColor = 'red';
+                ArrayMax[i].userPrice = ArrayMax[i].input.value;
+                ArrayMax[i].button.textContent = `Остановить ожидание MAX(${ArrayMax[i].userPrice})`;
+                
+                speak(`Ожидание на цену (${ArrayMax[i].userPrice}) включено`)
+             }else{
+                ArrayMax[i].userPrice = null;
+                speak('Ожидание остановлено')
+                clearInterval(ArrayMax[i].checkInterval);
+                ArrayMax[i].checkInterval = null;
+                // Возвращаем цвет кнопки к исходному состоянию
+                ArrayMax[i].button.style.backgroundColor = ''; // Исходный цвет кнопки
+                ArrayMax[i].button.textContent = 'Ожидать ценовое превышение';
+             }
+            break
+        }
+      }
+      
+      
+    });
+
+    let objMax = {
+        input: input,
+        button: button,
+        checkInterval: null,
+        userPrice: 0,
+    }  
+    ArrayMax.push(objMax)
+    // Добавляем элементы в DOM
+    container.appendChild(input);
+    container.appendChild(button);
+  });
+
+
+let ArrayMin = new Array();
+
+document.getElementById('addMechanismMin').addEventListener('click', function() {
+    var container = document.getElementById('containerMin');
+  
+    // Создаем поле ввода
+    var input = document.createElement('input');
+    input.type = 'number';
+    input.placeholder = 'Укажите цену биткоина';
+  
+    // Создаем кнопку для запуска процедуры
+    var button = document.createElement('button');
+    button.textContent = 'Запустить ожидание';
+    
+    // Добавляем обработчик нажатия для кнопки
+    button.addEventListener('click', function() {
+      var targetPrice = input.value;
+      for (let i = 0; i < ArrayMin.length; i++) {
+        if (this == ArrayMin[i].button){
+            if (ArrayMin[i].checkInterval == null){
+                // Если проверка не активирована, начинаем проверку
+                const checkPriceFunc = function(){
+                    fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
+                    .then(response => response.json())
+                    .then(data => {
+                        const btcPrice = parseFloat(data.price);
+                        if (btcPrice < ArrayMin[i].userPrice) {
+                            let btcPriceVoice = Math.round(data.price)
+                            speak(`Текущая цена Bitcoin (${btcPriceVoice}) ниже (${ArrayMin[i].userPrice})!`);
+                            ArrayMin[i].userPrice = null;
+                            clearInterval(ArrayMin[i].checkInterval);
+                            ArrayMin[i].checkInterval = null;
+                            // Возвращаем цвет кнопки к исходному состоянию
+                            ArrayMin[i].button.style.backgroundColor = ''; // Исходный цвет кнопки
+                            ArrayMin[i].button.textContent = 'Ожидать ценовое понижение';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка при получении данных: ', error);
+                        alert('Произошла ошибка при получении данных с Binance.');
+                    });
+                }; // Проверяем цену сразу при нажатии
+                checkPriceFunc();
+                ArrayMin[i].checkInterval = setInterval(checkPriceFunc, 10000); // Затем устанавливаем интервал
         
-    } else {
-        userPrice = null;
-        speak('Ожидание остановлено')
-        stopChecking()
-    }
-});
+                // Изменяем цвет кнопки, указывая на активацию
+                ArrayMin[i].button.style.backgroundColor = 'red';
+                ArrayMin[i].userPrice = ArrayMin[i].input.value;
+                ArrayMin[i].button.textContent = `Остановить ожидание MIN(${ArrayMin[i].userPrice})`;
+                
+                speak(`Ожидание на цену (${ArrayMin[i].userPrice}) включено`)
+             }else{
+                ArrayMin[i].userPrice = null;
+                speak('Ожидание остановлено')
+                clearInterval(ArrayMin[i].checkInterval);
+                ArrayMin[i].checkInterval = null;
+                // Возвращаем цвет кнопки к исходному состоянию
+                ArrayMin[i].button.style.backgroundColor = ''; // Исходный цвет кнопки
+                ArrayMin[i].button.textContent = 'Ожидать ценовое понижение';
+             }
+            break
+        }
+      }
+      
+      
+    });
 
-function stopChecking(){
-    clearInterval(checkInterval);
-    checkInterval = null; // Сбрасываем ссылку на setInterval
-
-    // Возвращаем цвет кнопки к исходному состоянию
-    buttonCheckPrice.style.backgroundColor = ''; // Исходный цвет кнопки
-    buttonCheckPrice.textContent = 'Ожидать ценовое превышение';
-}
-
-function checkPrice() {
-
-    fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
-        .then(response => response.json())
-        .then(data => {
-            const btcPrice = parseFloat(data.price);
-            if (btcPrice > userPrice) {
-                let btcPriceVoice = Math.round(data.price)
-                speak(`Текущая цена Bitcoin (${btcPriceVoice}) выше указанной (${userPrice})!`);
-                stopChecking();
-            }
-        })
-        .catch(error => {
-            console.error('Ошибка при получении данных: ', error);
-            alert('Произошла ошибка при получении данных с Binance.');
-        });
-}
-
-
-//MIN
-let checkIntervalMin = null; // Для хранения ссылки на setInterval
-let buttonCheckPriceMin = null;
-let userPriceMin = null;
-
-document.getElementById('checkMinPriceBtn').addEventListener('click', function() {
-    buttonCheckPriceMin = this;
-    if (checkIntervalMin == null) {
-        // Если проверка не активирована, начинаем проверку
-        checkPriceMin(); // Проверяем цену сразу при нажатии
-        checkIntervalMin = setInterval(checkPriceMin, 10000); // Затем устанавливаем интервал
-
-        // Изменяем цвет кнопки, указывая на активацию
-        buttonCheckPriceMin.style.backgroundColor = 'red';
-        userPriceMin = document.getElementById('priceInputMin').value;
-        buttonCheckPriceMin.textContent = `Остановить ожидание (${userPriceMin})`;
-        
-        speak(`Ожидание на цену (${userPriceMin}) включено`)
-        
-    } else {
-        userPriceMin = null;
-        speak('Ожидание остановлено')
-        stopCheckingMin()
-    }
-});
-
-function stopCheckingMin(){
-    clearInterval(checkIntervalMin);
-    checkIntervalMin = null; // Сбрасываем ссылку на setInterval
-
-    // Возвращаем цвет кнопки к исходному состоянию
-    buttonCheckPriceMin.style.backgroundColor = ''; // Исходный цвет кнопки
-    buttonCheckPriceMin.textContent = 'Ожидать ценовое понижение';
-}
-
-function checkPriceMin() {
-
-    fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
-        .then(response => response.json())
-        .then(data => {
-            const btcPrice = parseFloat(data.price);
-            if (btcPrice < userPriceMin) {
-                let btcPriceVoice = Math.round(data.price)
-                speak(`Текущая цена Bitcoin (${btcPriceVoice}) ниже указанной (${userPriceMin})!`);
-                stopCheckingMin();
-            }
-        })
-        .catch(error => {
-            console.error('Ошибка при получении данных: ', error);
-            alert('Произошла ошибка при получении данных с Binance.');
-        });
-}
+    let objMax = {
+        input: input,
+        button: button,
+        checkInterval: null,
+        userPrice: 0,
+    }  
+    ArrayMin.push(objMax)
+    // Добавляем элементы в DOM
+    container.appendChild(input);
+    container.appendChild(button);
+  });

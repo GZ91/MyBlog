@@ -101,3 +101,56 @@ function checkPrice() {
         });
 }
 
+
+//MIN
+let checkIntervalMin = null; // Для хранения ссылки на setInterval
+let buttonCheckPriceMin = null;
+let userPriceMin = null;
+
+document.getElementById('checkMinPriceBtn').addEventListener('click', function() {
+    buttonCheckPriceMin = this;
+    if (checkIntervalMin == null) {
+        // Если проверка не активирована, начинаем проверку
+        checkPriceMin(); // Проверяем цену сразу при нажатии
+        checkIntervalMin = setInterval(checkPriceMin, 10000); // Затем устанавливаем интервал
+
+        // Изменяем цвет кнопки, указывая на активацию
+        buttonCheckPriceMin.style.backgroundColor = 'red';
+        userPriceMin = document.getElementById('priceInputMin').value;
+        buttonCheckPriceMin.textContent = `Остановить ожидание (${userPriceMin})`;
+        
+        speak(`Ожидание на цену (${userPriceMin}) включено`)
+        
+    } else {
+        userPriceMin = null;
+        speak('Ожидание остановлено')
+        stopCheckingMin()
+    }
+});
+
+function stopCheckingMin(){
+    clearInterval(checkIntervalMin);
+    checkIntervalMin = null; // Сбрасываем ссылку на setInterval
+
+    // Возвращаем цвет кнопки к исходному состоянию
+    buttonCheckPriceMin.style.backgroundColor = ''; // Исходный цвет кнопки
+    buttonCheckPriceMin.textContent = 'Ожидать ценовое понижение';
+}
+
+function checkPriceMin() {
+
+    fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
+        .then(response => response.json())
+        .then(data => {
+            const btcPrice = parseFloat(data.price);
+            if (btcPrice < userPriceMin) {
+                let btcPriceVoice = Math.round(data.price)
+                speak(`Текущая цена Bitcoin (${btcPriceVoice}) ниже указанной (${userPriceMin})!`);
+                stopCheckingMin();
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка при получении данных: ', error);
+            alert('Произошла ошибка при получении данных с Binance.');
+        });
+}
